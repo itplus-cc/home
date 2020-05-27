@@ -1,0 +1,263 @@
+{% extends 'home/layout.html' %}
+
+{% block css %}
+<style>
+    lottie-player {
+        width: 300px;
+        height: 300px;
+    }
+
+    @media screen and (orientation: portrait) {
+
+        /*竖屏 css*/
+        lottie-player {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 40px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<body class="page-body">
+    <!-- skin-white -->
+    <div class="page-container">
+        <div class="sidebar-menu toggle-others fixed">
+            <div class="sidebar-menu-inner">
+                <header class="logo-env">
+                    <!-- logo -->
+                    <div class="logo">
+                        <a href="/" class="logo-expanded">
+                            <img src="{{ buildStaticUrl('assets/images/logo@2x.png') }}" width="100%" alt="" />
+                        </a>
+                        <a href="/" class="logo-collapsed">
+                            <img src="{{ buildStaticUrl('assets/images/logo-collapsed@2x.png') }}" width="40" alt="" />
+                        </a>
+                    </div>
+                    <div class="mobile-menu-toggle visible-xs">
+                        <a href="#" data-toggle="user-info-menu">
+                            <i class="linecons-cog"></i>
+                        </a>
+                        <a href="#" data-toggle="mobile-menu">
+                            <i class="fa-bars"></i>
+                        </a>
+                    </div>
+                </header>
+                <ul id="main-menu" class="main-menu">
+                    {% for item in llist %}
+                    <li>
+
+                        {% if  item.child %}
+                        <a>
+                            <i class="{{ item.icon }}"></i>
+                            <span class="title">{{ item.name }}</span>
+                        </a>
+                        <ul>
+                            {% for i in item.child %}
+                            <li>
+                                <a href="#{{ i.name }}" class="smooth">
+                                    <span class="title">{{ i.name }}</span>
+                                    {% if i.ishot %}
+                                    <span class="label label-pink pull-right hidden-collapsed">Hot</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <a href="#{{ item.name }}" class="smooth">
+                            <i class="{{ item.icon }}"></i>
+                            <span class="title">{{ item.name }}</span>
+                            {% if item.ishot %}
+                            <span class="label label-pink pull-right hidden-collapsed">Hot</span>
+                            {% endif %}
+                        </a>
+                        {% endif %}
+
+                    </li>
+
+
+                    {% endfor %}
+
+                </ul>
+            </div>
+        </div>
+        <div class="main-content">
+            <nav class="navbar user-info-navbar" role="navigation">
+                <!-- User Info, Notifications and Menu Bar -->
+                <!-- Left links for user info navbar -->
+                <ul class="user-info-menu left-links list-inline list-unstyled">
+                    <li class="hidden-sm hidden-xs">
+                        <a href="#" data-toggle="sidebar">
+                            <i class="fa-bars"></i>
+                        </a>
+                    </li>
+                    <li style="padding-top: 20px">
+                        <input class="form-control" id="search" placeholder="搜索" />
+                    </li>
+
+                    {#                   <li class="dropdown hover-line language-switcher">#}
+                    {#                        <a href="../cn/index.html" class="dropdown-toggle" data-toggle="dropdown">#}
+                    {#                            <img src="{{ buildStaticUrl('assets/images/flags/flag-cn.png') }}" alt="flag-cn"/> Chinese#}
+                    {#                        </a>#}
+                    {#                        <ul class="dropdown-menu languages">#}
+                    {#                            <li>#}
+                    {#                                <a href="en/index.html">#}
+                    {#                                    <img src="{{ buildStaticUrl('assets/images/flags/flag-us.png') }}" alt="flag-us"/>#}
+                    {#                                    English#}
+                    {#                                </a>#}
+                    {#                            </li>#}
+                    {#                            <li class="active">#}
+                    {#                                <a href="../cn/index.html">#}
+                    {#                                    <img src="{{ buildStaticUrl('assets/images/flags/flag-cn.png') }}" alt="flag-cn"/>#}
+                    {#                                    Chinese#}
+                    {#                                </a>#}
+                    {#                            </li>#}
+                    {#                        </ul>#}
+                    {#                    </li> #}
+                </ul>
+                <a href="https://github.com/itplus-cc/home" target="_blank"><img
+                        style="position: absolute; top: 0; right: 0; border: 0;"
+                        src="{{ buildStaticUrl('assets/images/forkme_right_darkblue_121621.png') }}"
+                        alt="Fork me on GitHub"></a>
+            </nav>
+            <!-- 常用推荐 -->
+            {% for item in rlist %}
+            <h4 class="text-gray"><i class="linecons-tag" style="margin-right: 7px;"
+                    id="{{ item.name }}"></i>{{ item.name }}</h4>
+            {% if item.child %}
+            <div class="row">
+                {% for i in item.child %}
+                <div class="col-sm-3">
+                    <div class="xe-widget xe-conversations box2 label-info"
+                        onclick="window.open('{{ i.url }}', '_blank')" data-toggle="tooltip" data-placement="bottom"
+                        title="{{ i.url }}" data-original-title="{{ i.url }}">
+                        <div class="xe-comment-entry">
+                            <a class="xe-user-img">
+                                <img src="{{ i.icon }}" class="img-circle" width="40">
+                            </a>
+                            <div class="xe-comment">
+                                <a href="#" class="xe-user-name overflowClip_1">
+                                    <strong>{{ i.name }}</strong>
+                                </a>
+                                <p class="overflowClip_2">{{ i.desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <br />
+            {% endif %}
+
+            {% endfor %}
+            <div style="bottom: 30px;right: 10px; position: fixed">
+                <script src="{{ buildStaticUrl('assets/js/lottie-player.js') }}"></script>
+                <lottie-player src="{{ buildStaticUrl('assets/js/default.json') }}" background="transparent" speed="1"
+                    loop autoplay>
+                </lottie-player>
+            </div>
+
+            <!-- END 常用推荐 -->
+
+            <!-- Main Footer -->
+            <!-- Choose between footer styles: "footer-type-1" or "footer-type-2" -->
+            <!-- Add class "sticky" to  always stick the footer to the end of page (if page contents is small) -->
+            <!-- Or class "fixed" to  always fix the footer to the end of page -->
+            <footer class="main-footer sticky footer-type-1">
+                <div class="footer-inner">
+                    <!-- Add your copyright text here -->
+                    <div class="footer-text">
+                        &copy; 2020
+                        <a href="#"><strong>HOME</strong></a> design by <a href="#"><strong>itplus</strong></a>
+                        <!--  - Purchase for only <strong>23$</strong> -->
+                    </div>
+                    <!-- Go to Top Link, just add rel="go-top" to any link to add this functionality -->
+                    <div class="go-up">
+                        <a href="#" rel="go-top">
+                            <i class="fa-angle-up"></i>
+                        </a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- 锚点平滑移动 -->
+
+</body>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#search').bind('keypress', function (event) {
+            if (event.keyCode == "13") {
+                let vl = $('#search').val()
+                console.log(vl)
+            }
+
+        });
+
+        $(document).on('click', '.has-sub', function () {
+            var _this = $(this)
+            if (!$(this).hasClass('expanded')) {
+                setTimeout(function () {
+                    _this.find('ul').attr("style", "")
+                }, 300);
+
+            } else {
+                $('.has-sub ul').each(function (id, ele) {
+                    var _that = $(this)
+                    if (_this.find('ul')[0] != ele) {
+                        setTimeout(function () {
+                            _that.attr("style", "")
+                        }, 300);
+                    }
+                })
+            }
+        })
+        $('.user-info-menu .hidden-sm').click(function () {
+            if ($('.sidebar-menu').hasClass('collapsed')) {
+                $('.has-sub.expanded > ul').attr("style", "")
+            } else {
+                $('.has-sub.expanded > ul').show()
+            }
+        })
+        $("#main-menu li ul li").click(function () {
+            $(this).siblings('li').removeClass('active'); // 删除其他兄弟元素的样式
+            $(this).addClass('active'); // 添加当前元素的样式
+        });
+        $("a.smooth").click(function (ev) {
+            ev.preventDefault();
+            public_vars.$mainMenu.add(public_vars.$sidebarProfile).toggleClass('mobile-is-visible');
+            ps_destroy();
+            $("html, body").animate({
+                scrollTop: $($(this).attr("href")).offset().top - 30
+            }, {
+                duration: 500,
+                easing: "swing"
+            });
+        });
+        return false;
+    })
+        ;
+
+    var href = "";
+    var pos = 0;
+    $("a.smooth").click(function (e) {
+        $("#main-menu li").each(function () {
+            $(this).removeClass("active");
+        });
+        $(this).parent("li").addClass("active");
+        e.preventDefault();
+        href = $(this).attr("href");
+        pos = $(href).position().top - 30;
+    });
+</script>
+{% endblock %}

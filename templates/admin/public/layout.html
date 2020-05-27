@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>Home管理后台</title>
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="{{ buildStaticUrl('theme/css/bootstrap.min.css?v=3.3.6') }}" rel="stylesheet">
+    <link href="{{ buildStaticUrl('theme/css/font-awesome.css?v=4.4.0') }}" rel="stylesheet">
+
+
+    {% block css %}
+    {% endblock %}
+    <link href="{{ buildStaticUrl('theme/css/plugins/iCheck/custom.css') }}" rel="stylesheet">
+    <link href="{{ buildStaticUrl('theme/css/animate.css') }}" rel="stylesheet">
+    <link href="{{ buildStaticUrl('theme/css/style.css?v=4.1.0') }}" rel="stylesheet">
+</head>
+
+<body class="gray-bg top-navigation">
+
+<div id="wrapper">
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom white-bg">
+        {% include "admin/public/nav.html" %}
+        </div>
+        {% block breadcrumb %}
+
+        {% endblock %}
+        <div class="wrapper wrapper-content" style="min-height: 80vh">
+            {% block content %}
+                DEFAULT
+            {% endblock %}
+        </div>
+{% include "admin/public/footer.html" %}
+    </div>
+</div>
+
+
+<!-- 全局js -->
+<script src="{{ buildStaticUrl('theme/js/jquery.min.js?v=2.1.4') }}"></script>
+<script src="{{ buildStaticUrl('theme/js/bootstrap.min.js?v=3.3.6') }}"></script>
+<script src="{{ buildStaticUrl('theme/js/plugins/layer/layer.min.js') }}"></script>
+
+{% block js %}
+{% endblock %}
+
+    <!-- 自定义js -->
+
+<script src="{{ buildStaticUrl('theme/js/content.js?v=1.0.0') }}"></script>
+  <!-- iCheck -->
+<script src="{{ buildStaticUrl('theme/js/plugins/iCheck/icheck.min.js') }}"></script>
+ <!-- opsjs -->
+<script src="{{ buildStaticUrl('common/common.js') }}"></script>
+
+<script>
+    function updateCommn(){
+         $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+    }
+        $(document).ready(function () {
+           updateCommn()
+        });
+    </script>
+</body>
+
+</html>

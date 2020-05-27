@@ -1,0 +1,258 @@
+{% extends 'admin/public/layout-page.html' %}
+
+{% block css %}
+    <!-- Data Tables -->
+    <link href="{{ buildStaticUrl('theme/css/plugins/dataTables/dataTables.bootstrap.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Arimo:400,700,400italic">
+    <link rel="stylesheet" href="{{ buildStaticUrl('assets/css/fonts/linecons/css/linecons.css') }}">
+    <link rel="stylesheet" href="{{ buildStaticUrl('assets/css/fonts/fontawesome/css/font-awesome.min.css') }}">
+{% endblock %}
+{% block breadcrumb_title %}
+    链接
+{% endblock %}
+{% block breadcrumb_list %}
+    <li>
+        <strong>链接管理</strong>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+
+                    <h5>基本
+                        <small>分类，查找</small>
+                    </h5>
+
+                    <div class="ibox-tools">
+                        <span class="label label-primary m-r-md" style="cursor:pointer;"
+                              onclick="handleAddLink(0)">NEW</span>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-bordered table-hover dataTables-example">
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="setInfo" role="dialog" aria-labelledby="setInfoModalLabel"
+         data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="handleSetInfoclose()">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="setInfoModalLabel">
+                        添加链接
+                    </h4>
+                </div>
+
+                <form class="form-horizontal m-t" id="setInfoForm" onsubmit="return handleSetInfo($(this))">
+                    <input name="reset" type="reset" style="display: none"/>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">名称：</label>
+                            <div class="col-sm-8">
+                                <input name="name" class="form-control" type="text" placeholder="请输入分类名称" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">desc：</label>
+                            <div class="col-sm-8">
+                                <input name="desc" class="form-control" value="" type="text"
+                                       placeholder="描述" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">url：</label>
+                            <div class="col-sm-8">
+                                <input name="url" class="form-control"  type="url"
+                                       placeholder="url" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">icon：</label>
+                            <div class="col-sm-6">
+                                <img src="" id="iconShow" width="100%" height="200" onerror="this.style.display='none'">
+                                <input type="file" id="demo" accept=".png,.jpg" style="display:none" onchange="handleSetUploadFile()" >
+                                <input type="hidden" name="icon" class="form-control" value="" >
+                                </div>
+                             <div class="col-sm-2">
+                                <a class="btn btn-primary btn-sm"  onclick="$('#demo').click();event.stopPropagation();" >上传</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">分类：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="cate">
+                                    {% for c in cates %}
+                                        <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" style="margin-bottom:5px">提交</button>
+                    </div>
+
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+{% endblock %}
+
+{% block js %}
+    <!-- Data Tables -->
+    <script src="{{ buildStaticUrl('theme/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
+    <script src="{{ buildStaticUrl('theme/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
+    <script>
+
+
+        let TableData = []
+        let table = $('.dataTables-example')
+        let Linkid = 0
+        let method = 'post'
+        let formitem = () => {
+            return {
+                name: $("input[name='name']").val(),
+                icon: $("input[name='icon']").val(),
+                desc: $("input[name='desc']").val(),
+                cate: $("select[name='cate']").val(),
+                url: $("input[name='url']").val(),
+            }
+        }
+        function handleSetUploadFile() {
+            var formData = new FormData();
+	        formData.append('file', $('#demo')[0].files[0]);
+            common_ops.ajax('post','/api/IconUploadApi',formData,contentType=false,async=false,processData=false).then(res=>{
+                if(res){
+                     $("input[name='icon']").val(res)
+                     $("#iconShow").attr('src',res).show()
+                }
+            })
+
+        }
+        function handleAddLink(pid) {
+            Linkid = 0
+            method = 'post'
+            $("select[name='pid']").val(pid)
+            if (pid == 0)
+                $("select[name='pid']").prop('disabled', true)
+            $('#setInfo').modal('show')
+        }
+
+
+        function handleEditLink(id) {
+            common_ops.ajax('get', '/api/LinkApi', {
+                id: id
+            }).then(res => {
+                if (res) {
+                    Linkid = res.id
+                    method = 'put'
+                    $("input[name='name']").val(res.name)
+                    $("input[name='icon']").val(res.icon)
+                    $("#iconShow").attr('src',res.icon).show()
+                    $("input[name='desc']").val(res.desc)
+                    $("select[name='cate']").val(res.cate)
+                    $("input[name='url']").val(res.url)
+                    $('#setInfo').modal('show')
+                }
+            })
+
+        }
+
+        function handleDelLink(id) {
+            common_ops.ajax('delete', '/api/LinkApi?id=' + id,).then(res => {
+                if (res) {
+                    setTimeout("location.reload()", 500)
+                }
+            })
+        }
+
+        function handleGetPageData() {
+            common_ops.ajax('get', '/api/LinksApi', {
+                isAll: 1,
+                selectField:['cate:name'],
+            }).then(res => {
+                if (res) {
+                    TableData = res.results
+                    return true
+                } else {
+                    return false
+                }
+            }).then(res => {
+                table.dataTable(
+                    {
+                        columnDefs: [{
+                            targets: [5], title: 'Action', sorting: false, "render": function (data, type, row, meta) {
+
+                                return '<button class="btn btn-white btn-bitbucket btn-xs" onclick="handleEditLink(' + row.id + ')">\
+                                <i class="fa fa-edit"></i>\
+                                 </button>\
+                                <button class="btn btn-white btn-bitbucket btn-xs" onclick="handleDelLink(' + row.id + ')">\
+                                    <i class="fa fa-trash-o"></i>\
+                                </button>';
+                            }
+                        },
+                            {
+                                targets: [2], render: function (data, type, row, meta) {
+                                    return '<img src="'+data+'"  width="30" height="30" onerror="this.style.display=\'none\'">'
+
+                                }
+                            },
+                        ],
+                        data: TableData,
+                        columns: [
+                            {"data": "name", title: '名称'},
+                            {"data": "desc", title: '描述'},
+                            {"data": "icon", title: '图标'},
+                            {"data": "url", title: 'url'},
+                            {"data": "cate:name", title: '分类'},
+                            {"data": "id",},
+                        ]
+                    }
+                );
+            })
+        }
+
+        function handleSetInfoclose() {
+            console.log('close');
+            $('#setInfo').modal('hide')
+        }
+
+        function handleSetInfo(e) {
+            let body = formitem()
+            let url = ''
+            if (Linkid == 0) {
+                url = "/api/LinkApi"
+            } else {
+                url = "/api/LinkApi?id=" + Linkid
+            }
+            common_ops.ajax(method, url, JSON.stringify(body)).then(res => {
+                if (res) {
+                    setTimeout("location.reload()", 500)
+                }
+            })
+            return false
+        }
+
+        $(document).ready(function () {
+            handleGetPageData()
+        })
+    </script>
+
+{% endblock %}

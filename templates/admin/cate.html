@@ -1,0 +1,256 @@
+{% extends 'admin/public/layout-page.html' %}
+
+{% block css %}
+    <!-- Data Tables -->
+    <link href="{{ buildStaticUrl('theme/css/plugins/dataTables/dataTables.bootstrap.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Arimo:400,700,400italic">
+    <link rel="stylesheet" href="{{ buildStaticUrl('assets/css/fonts/linecons/css/linecons.css') }}">
+    <link rel="stylesheet" href="{{ buildStaticUrl('assets/css/fonts/fontawesome/css/font-awesome.min.css') }}">
+{% endblock %}
+{% block breadcrumb_title %}
+    分类
+{% endblock %}
+{% block breadcrumb_list %}
+    <li>
+        <strong>分类管理</strong>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+
+                    <h5>基本
+                        <small>分类，查找</small>
+                    </h5>
+
+                    <div class="ibox-tools">
+                        <span class="label label-primary m-r-md" style="cursor:pointer;"
+                              onclick="handleAddCate(0)">NEW</span>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-bordered table-hover dataTables-example">
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="setInfo" role="dialog" aria-labelledby="setInfoModalLabel"
+         data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="handleSetInfoclose()">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="setInfoModalLabel">
+                        添加分类
+                    </h4>
+                </div>
+
+                <form class="form-horizontal m-t" id="setInfoForm" onsubmit="return handleSetInfo($(this))">
+                    <input name="reset" type="reset" style="display: none"/>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">名称：</label>
+                            <div class="col-sm-8">
+                                <input name="name" class="form-control" type="text" placeholder="请输入分类名称" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">图标：</label>
+                            <div class="col-sm-8">
+                                <input name="icon" class="form-control" value="linecons-diamond" type="text"
+                                       placeholder="展示icon" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">isHot：</label>
+                            <div class="col-sm-8">
+                                <div class="checkbox i-checks">
+                                    <input type="checkbox" name="ishot">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">上级分类：</label>
+                            <div class="col-sm-8">
+
+                                <select class="form-control" name="pid">
+                                    <option value="0">顶级分类</option>
+                                    {% for c in cates %}
+                                        <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" style="margin-bottom:5px">提交</button>
+                    </div>
+
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+{% endblock %}
+
+{% block js %}
+    <!-- Data Tables -->
+    <script src="{{ buildStaticUrl('theme/js/plugins/dataTables/jquery.dataTables.js') }}"></script>
+    <script src="{{ buildStaticUrl('theme/js/plugins/dataTables/dataTables.bootstrap.js') }}"></script>
+    <script>
+
+
+        let TableData = []
+        let table = $('.dataTables-example')
+        let cateid = 0
+        let method = 'post'
+        let formitem = () => {
+            return {
+                name: $("input[name='name']").val(),
+                icon: $("input[name='icon']").val(),
+                pid: $("select[name='pid']").val(),
+                ishot: $("input[name='ishot']").prop('checked'),
+            }
+        }
+
+        function handleAddCate(pid) {
+            cateid = 0
+            method = 'post'
+            $("select[name='pid']").val(pid)
+            if (pid == 0)
+                $("select[name='pid']").prop('disabled', true)
+            $('#setInfo').modal('show')
+        }
+
+
+        function handleEditCate(id) {
+            common_ops.ajax('get', '/api/CateApi', {
+                id: id
+            }).then(res => {
+                if (res) {
+                    cateid = res.id
+                    method = 'put'
+                    $("input[name='name']").val(res.name)
+                    $("input[name='icon']").val(res.icon)
+                    $("select[name='pid']").val(res.pid)
+                    $("input[name='ishot']").prop('checked', res.ishot)
+                    updateCommn()
+                    $('#setInfo').modal('show')
+                }
+            })
+
+        }
+
+        function handleDelCate(id) {
+              common_ops.ajax('delete', '/api/CateApi?id='+id,).then(res=>{
+                 if (res) {
+                    setTimeout("location.reload()", 500)
+                }
+              })
+        }
+
+        function handleGetPageData() {
+            common_ops.ajax('get', '/api/CatesApi', {
+                isAll: 1
+            }).then(res => {
+                if (res) {
+                    TableData = res.results
+                    return true
+                } else {
+                    return false
+                }
+            }).then(res => {
+                table.dataTable(
+                    {
+                        columnDefs: [{
+                            targets: [4], title: 'Action', sorting: false, "render": function (data, type, row, meta) {
+                                if (row.pid == 0) {
+                                    return '<button class="btn btn-white btn-bitbucket btn-xs" onclick="handleAddCate(' + [row.id] + ')">\
+                                    <i class="fa fa-plus"></i>\
+                                </button>\
+                                <button class="btn btn-white btn-bitbucket btn-xs" onclick="handleEditCate(' + row.id + ')">\
+                                <i class="fa fa-edit"></i>\
+                                 </button>\
+                                <button class="btn btn-white btn-bitbucket btn-xs" onclick="handleDelCate(' + row.id + ')">\
+                                    <i class="fa fa-trash-o"></i>\
+                                </button>';
+                                } else {
+                                    return '<button class="btn btn-white btn-bitbucket btn-xs" onclick="handleEditCate(' + row.id + ')">\
+                                <i class="fa fa-edit"></i>\
+                                 </button>\
+                                <button class="btn btn-white btn-bitbucket btn-xs" onclick="handleDelCate(' + row.id + ')">\
+                                    <i class="fa fa-trash-o"></i>\
+                                </button>';
+                                }
+
+                            }
+                        },
+                            {
+                                targets: [1], render: function (data, type, row, meta) {
+                                    return '<i class="' + data + '"></i>'
+                                }
+                            },
+                            {
+                                targets: [3], render: function (data, type, row, meta) {
+                                    if (data === 0) {
+                                        return 'root'
+                                    } else {
+                                        return data.name
+                                    }
+                                }
+                            }
+                        ],
+                        data: TableData,
+                        columns: [
+                            {"data": "name", title: '名称'},
+                            {"data": "icon", title: '图标'},
+                            {"data": "ishot", title: '是否标记hot'},
+                            {"data": "pid", title: '上级'},
+                            {"data": "id",},
+                        ]
+                    }
+                );
+            })
+        }
+
+        function handleSetInfoclose() {
+            console.log('close');
+            $('#setInfo').modal('hide')
+        }
+
+        function handleSetInfo(e) {
+            let body = formitem()
+            let url=''
+            if(cateid==0){
+                url="/api/CateApi"
+            }else{
+                url="/api/CateApi?id="+cateid
+            }
+            common_ops.ajax(method, url, JSON.stringify(body)).then(res => {
+                if (res) {
+                    setTimeout("location.reload()", 500)
+                }
+            })
+            return false
+        }
+
+        $(document).ready(function () {
+            handleGetPageData()
+        })
+    </script>
+
+{% endblock %}

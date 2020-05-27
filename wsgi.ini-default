@@ -1,0 +1,50 @@
+[uwsgi]
+socket = 127.0.0.1:3402
+threads = 2
+master = True
+chdir = /data/code/opsJobs 
+# The module entry point for your app. For my purposes, it is project:app
+module = app:app
+callable = app
+daemonize = /data/log/opsJobs.log
+
+# Add environment variables.
+# FLASK
+env = FLASK_ENV=production
+env = FLASK_DEBUG=False 
+#logto =  /data/log/uwsgi/uwsgi.log
+
+# 100 mb. Rather use log rotate to handle log rotation.
+# log-maxsize = 100000000
+# logfile-chown = True
+
+#Have a master process
+master = True
+pidfile=/tmp/opsJobs.pid
+
+# Reload when that master process file is touched with touch filename
+#touch-reload=/tmp/uwsgimaster.pid
+
+#For new relic
+enable-threads = True
+single-interpreter = True
+
+# This should make uwsgi restart brutally which may be needed when the server crashes
+die-on-term = True
+
+# More processes
+processes = 4
+
+# respawn processes taking more than 30 seconds
+harakiri = 30 
+# Shoud prevent hikiri for kicking in on uploads
+post-buffering = True
+
+# respawn processes after serving 5000 requests
+max-requests = 5000
+
+# Enable stats
+#stats = /tmp/uwsgistats.socket
+
+# Turn this off for production
+# catch-exceptions = True
