@@ -2,20 +2,31 @@
 
 基于webstack模版扩展的网址导航
 
+## 新增Docker部署
+
+```
+git clone https://github.com/Brooke9537/home.git
+cd home
+docker build -t home .
+docker run -itd --name home --network host home
+# 默认使用8001端口，host网络模式，可直接ip:port访问，需要修改请看init.sh
+docker logs -f home
+```
 
 
 ###  安装运行环境
 
 ```
-python3 -m venv venv 
-source venv/bin/activate 
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
 ###  创建配置文件
 
 ```
-\cp  config/local_demo.py  config/development.py
+cp  config/local_demo.py  config/development.py
+# 可选择数据库MySQL或SQLite，修改移步app.py 使用SQLite无需配置DATABASE_CONF
 cat >> .env  <<ENV
 FLASK_ENV=development
 FLASK_DEBUG=1
@@ -32,7 +43,7 @@ flask db init
 ###  开发环境运行
 
 ```
-flask run 
+flask run
 ```
 
 ###  生产环境运行
