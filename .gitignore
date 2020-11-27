@@ -16,3 +16,4 @@ static/avatar/*
 venv/*
 *.pid
 wsgi.ini
+my_home.db

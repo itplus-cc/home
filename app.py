@@ -14,7 +14,12 @@ except Exception as e:
 
 CORS(supports_credentials=True).init_app(app)
 
-database = pe.MySQLDatabase(app.config["DATABASE"], **app.config["DATABASE_CONF"])
+#database = pe.MySQLDatabase(app.config["DATABASE"], **app.config["DATABASE_CONF"])
+database = pe.SqliteDatabase('my_home.db', pragmas={
+    'journal_mode': 'wal',
+    'cache_size': 10000,  # 10000 pages, or ~40MB
+    'foreign_keys': 1,  # Enforce foreign-key constraints
+})
 db = FlaskDB(app, database)
 from apps import *
 from common.db.init import db_cli
