@@ -29,7 +29,7 @@ class CatesApi(ApiListView):
     searchField = []
     selectField = []
     orderField = ['id', 'create_time']
-    ordering = '-create_time'
+    ordering = '-sort'
     pagesize = 10
     page = 1
 

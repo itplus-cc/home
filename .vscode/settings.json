@@ -3,11 +3,18 @@
         "**/__pycache__": true
     },
     "files.trimTrailingWhitespace": true,
+    "python.venvPath": "./venv",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.terminal.activateEnvironment": true,
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
         "--max-line-length=248",
-        "--per-file-ignores='app.py'"
+        "--per-file-ignores='app.py'",
     ],
     "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--enable=W0614",
+        "--ignore D100"
+    ],
     "python.formatting.provider": "black"
 }

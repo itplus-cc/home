@@ -9,6 +9,7 @@ class Cate(db.AbstractModel):
     icon = pe.CharField(max_length=100, default='', verbose_name="name")
     ishot = pe.BooleanField(default=False, verbose_name="常用推荐")
     pid = pe.IntegerField(default=0, index=True, verbose_name="上级")
+    sort = pe.IntegerField(default=0, index=True, verbose_name="排序")
 
     def __str__(self):
         return f"{self.name}"

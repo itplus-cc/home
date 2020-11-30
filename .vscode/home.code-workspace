@@ -5,9 +5,6 @@
 		}
 	],
 	"settings": {
-		"python.venvPath":"./venv",
-		"python.terminal.activateEnvInCurrentTerminal":true,
-		"python.terminal.activateEnvironment":true,
 		"editor.formatOnSave": true
 	}
 }
