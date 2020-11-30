@@ -13,7 +13,7 @@ DATABASE_TYPE = "sqlite"
 #     'passwd': '123456',
 #     'charset': 'utf8mb4',
 # }
-SQLITE_DB="orz-sqlite.db"
+SQLITE_DB="home.db"
 SQLITE_CONF={
     'journal_mode': 'wal',
     'cache_size': 10000,  # 10000 pages, or ~40MB
