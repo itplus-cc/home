@@ -128,7 +128,7 @@
             name: $("input[name='name']").val(),
             icon: $("input[name='icon']").val(),
             pid: $("select[name='pid']").val(),
-            sort: $("select[name='sort']").val(),
+            sort: $("input[name='sort']").val(),
             ishot: $("input[name='ishot']").prop('checked'),
         }
     }
@@ -227,6 +227,7 @@
                         { "data": "icon", title: '图标' },
                         { "data": "ishot", title: '是否标记hot' },
                         { "data": "pid", title: '上级' },
+                        { "data": "sort", title: '排序' },
                         { "data": "id", },
                     ]
                 }
