@@ -13,18 +13,18 @@ class IndexView(BaseTemplateView):
         cates = (
             Cate.select(Cate.id, Cate.name, Cate.icon, Cate.ishot)
             .where(Cate.pid == 0)
-            .order_by(Cate.id.asc())
+            .order_by(Cate.sort.asc())
         )
         llist = list(cates.dicts())
         for x in llist:
             x["child"] = list(
                 Cate.select(Cate.name, Cate.ishot)
                 .where(Cate.pid == x["id"])
-                .order_by(Cate.id.asc())
+                .order_by(Cate.sort.asc())
                 .dicts()
             )
         context["llist"] = llist
-        rlist = list(Cate.select(Cate.id, Cate.name).order_by(Cate.id.asc()).dicts())
+        rlist = list(Cate.select(Cate.id, Cate.name).order_by(Cate.sort.asc()).dicts())
         rlists = []
         for i, x in enumerate(rlist):
             links = list(Link.select().where(Link.cate == x["id"]).dicts())
