@@ -184,7 +184,7 @@
             table.dataTable(
                 {
                     columnDefs: [{
-                        targets: [4], title: 'Action', sorting: false, "render": function (data, type, row, meta) {
+                        targets: [5], title: 'Action', sorting: false, "render": function (data, type, row, meta) {
                             if (row.pid == 0) {
                                 return '<button class="btn btn-white btn-bitbucket btn-xs" onclick="handleAddCate(' + [row.id] + ')">\
                                     <i class="fa fa-plus"></i>\
